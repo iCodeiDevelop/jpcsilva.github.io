@@ -1,0 +1,32 @@
+# ── Stage 1: Dependencies ─────────────────────────────────
+FROM node:20-alpine AS deps
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production && cp -R node_modules /tmp/prod_node_modules
+RUN npm ci
+
+# ── Stage 2: Build (no build step needed for vanilla Node) ─
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY --from=deps /tmp/prod_node_modules ./node_modules
+COPY . .
+
+# ── Stage 3: Production Image ─────────────────────────────
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser  --system --uid 1001 appuser
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/src          ./src
+COPY --from=builder /app/package.json ./
+
+RUN mkdir -p uploads/images logs && chown -R appuser:nodejs /app
+USER appuser
+
+EXPOSE 5000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD wget -q --spider http://localhost:5000/api/health || exit 1
+
+CMD ["node", "src/server.js"]
