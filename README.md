@@ -1,157 +1,142 @@
-# 🚀 Portfolio Management System
+# jpcsilva.com — John Paul Silva Portfolio
 
-A production-ready, full-stack portfolio management system with a dynamic admin CMS and a beautiful public-facing portfolio website.
+Personal portfolio website for **John Paul C. Silva** — IT Consultant, Systems Analyst, and Educator based in Davao City, Philippines.
 
-![License](https://img.shields.io/badge/license-MIT-blue)
-![Node](https://img.shields.io/badge/node-20+-green)
-![Next.js](https://img.shields.io/badge/next.js-14-black)
+**Live site:** https://jpcsilva.com  
+**Admin panel:** https://jpcsilva.com/admin
 
-## ✨ Features
+---
 
-### Admin Panel
-- 🔐 JWT authentication with refresh tokens & account lockout
-- 📊 Analytics dashboard with charts and activity logs
-- 📁 Full CRUD: Projects, Skills, Experience, Certifications, Blog
-- 🖼️ Image upload with validation
-- 🔍 SEO management per content item
-- 👥 Role-based access control (Admin / Editor / Viewer)
+## Stack
 
-### Public Portfolio
-- ⚡ Server-side rendered (Next.js ISR) for perfect SEO
-- 📱 Mobile-first responsive design
-- 🌙 Dark / Light mode toggle
-- 🎨 Smooth animations (Framer Motion)
-- 🔍 Projects filterable by category and tech stack
-- 📈 Skills visualization with animated progress bars
-- 📅 Experience timeline
-- 📧 Contact form with rate limiting
-- 📝 Blog with markdown support
+| Layer | Technology |
+|---|---|
+| Backend | Laravel 11, PHP 8.2+ |
+| Frontend | Blade, Tailwind CSS (CDN), Alpine.js |
+| Database | MySQL 8+ |
+| Icons | Lucide Icons |
+| Hosting | Shared hosting or VPS |
 
-## 🏗️ Tech Stack
+---
 
-| Layer    | Technology           |
-|----------|----------------------|
-| Frontend | Next.js 14, React 18 |
-| Styling  | Tailwind CSS 3       |
-| State    | Zustand + React Query|
-| Backend  | Node.js, Express.js  |
-| Database | MongoDB 7 + Mongoose |
-| Cache    | Redis 7              |
-| Auth     | JWT + Refresh Tokens |
-| Deploy   | Docker + Nginx       |
-| CI/CD    | GitHub Actions       |
-
-## 🚀 Quick Start
+## Quick Start (Local)
 
 ```bash
-# 1. Clone
-git clone https://github.com/your-username/portfolio.git
+# 1. Clone and enter project
+git clone https://github.com/jpcsilva/portfolio.git
 cd portfolio
 
-# 2. Install all deps
-npm run install:all
+# 2. Install PHP dependencies
+composer install
 
-# 3. Configure environment
-cp backend/.env.example  backend/.env
-cp frontend/.env.local.example frontend/.env.local
-# Edit both files with your config
+# 3. Set up environment
+cp .env.example .env
+php artisan key:generate
 
-# 4. Seed database
-npm run seed
+# 4. Configure database in .env, then:
+php artisan migrate
+php artisan db:seed
+php artisan storage:link
 
-# 5. Start development
-npm run dev
+# 5. Start local server
+php artisan serve
 ```
 
-**URLs:**
-- Portfolio:   http://localhost:3000
-- Admin Panel: http://localhost:3000/admin
-- API:         http://localhost:5000/api
-- Health:      http://localhost:5000/api/health
+**Visit:** http://localhost:8000  
+**Admin:** http://localhost:8000/admin  
+**Login:** admin@jpcsilva.com / Admin@2024!  
+*(Change your password immediately after first login)*
 
-**Default admin credentials:**
+---
+
+## Deployment (Shared Hosting — Hostinger/Namecheap)
+
+See **DEPLOYMENT.md** for full step-by-step guide.
+
+**Quick summary:**
+1. Purchase hosting + domain `jpcsilva.com`
+2. Point document root to `/public`
+3. Upload files via File Manager or Git
+4. Run `composer install --no-dev` via SSH
+5. Set up `.env` with production values
+6. Run `php artisan migrate --seed --force`
+7. Run `php artisan storage:link`
+
+---
+
+## Admin Panel
+
+Go to `/admin` to manage all content without touching code:
+
+- **Projects** — Add/edit/delete with tech stack, links, screenshots
+- **Skills** — Categorised skills with proficiency levels
+- **Experience** — Timeline entries with highlights
+- **Certifications** — PRC, ITIL v4, TESDA NC II, etc.
+- **Blog** — Write articles (Markdown supported)
+- **Messages** — View contact form submissions
+- **Settings** — Edit hero text, bio, social links, SEO
+
+---
+
+## Services Showcased
+
+1. IT Consulting
+2. Systems Analysis & Design
+3. Technical Writing
+4. IT Training & Facilitation
+5. IT Project Management
+
+---
+
+## Project Structure
+
 ```
-Email:    admin@portfolio.dev
-Password: Admin@123!
-```
+app/
+  Http/
+    Controllers/
+      Public/     ← HomeController, ProjectController, BlogController, ContactController
+      Admin/      ← Dashboard, Project, Skill, Experience, Cert, Blog, Message, Settings
+    Middleware/
+  Models/         ← Project, Skill, Experience, Certification, Blog, Message, Setting, User
 
-## 🐳 Docker
+database/
+  migrations/     ← 8 migrations
+  seeders/        ← Pre-filled with your real content
 
-```bash
-# Copy and configure environment
-cp backend/.env.example .env
+resources/
+  views/
+    layouts/      ← app.blade.php, nav.blade.php, footer.blade.php, admin.blade.php
+    public/       ← home.blade.php (single page), project-detail, blog-*
+    admin/        ← dashboard + CRUD views for each entity
 
-# Start all services
-docker compose up -d --build
-
-# Seed database (first time)
-docker compose exec backend node src/utils/seed.js
-```
-
-## 📁 Project Structure
-
-```
-portfolio/
-├── backend/                # Express.js API
-│   ├── src/
-│   │   ├── config/         # DB, logger, email config
-│   │   ├── controllers/    # Route handlers
-│   │   ├── middleware/     # Auth, rate limiting, upload
-│   │   ├── models/         # Mongoose schemas
-│   │   ├── routes/         # Express routers
-│   │   ├── services/       # Business logic (future)
-│   │   ├── utils/          # Helpers, seed, pagination
-│   │   ├── validators/     # Input validation rules
-│   │   └── server.js       # App entry point
-│   └── tests/
-│       ├── unit/
-│       └── integration/
-├── frontend/               # Next.js 14 App
-│   └── src/
-│       ├── app/            # App Router pages
-│       │   ├── admin/      # Admin CMS pages
-│       │   └── page.tsx    # Public portfolio (SSR)
-│       ├── components/
-│       │   ├── admin/      # Admin-specific components
-│       │   ├── public/     # Portfolio sections
-│       │   ├── shared/     # Navbar, Footer
-│       │   └── ui/         # Reusable primitives
-│       ├── hooks/          # React Query hooks
-│       ├── lib/            # Axios client
-│       ├── store/          # Zustand stores
-│       └── types/          # TypeScript types
-├── docker/                 # Dockerfiles + Nginx config
-├── docs/                   # Architecture, API, Deploy guides
-└── .github/workflows/      # CI/CD pipeline
-```
-
-## 📖 Documentation
-
-- [API Reference](docs/API.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [Deployment Guide](docs/DEPLOYMENT.md)
-
-## 🧪 Testing
-
-```bash
-cd backend
-npm test              # All tests
-npm run test:unit     # Unit tests only
-npm run test:coverage # With coverage report
+routes/web.php    ← All public + admin routes
 ```
 
-## 🔒 Security
+---
 
-- ✅ Password hashing: bcrypt (cost factor 12)
-- ✅ JWT with short-lived access tokens (15m)
-- ✅ httpOnly cookies for refresh tokens
-- ✅ Input sanitization: XSS + NoSQL injection
-- ✅ Rate limiting: API (100/15min), Auth (10/15min), Contact (5/hr)
-- ✅ Secure headers: Helmet.js
-- ✅ CORS with whitelist
-- ✅ Account lockout after 5 failed logins
-- ✅ Parameterized DB queries via Mongoose
+## After Launch — Content To Fill In
 
-## 📄 License
+These are left blank intentionally — update via **Admin → Settings**:
 
-MIT — see [LICENSE](LICENSE) for details.
+- [ ] Upload your professional photo → Settings → Profile Photo
+- [ ] Add your Resume PDF → Settings → Resume URL
+- [ ] Update GitHub URL → `https://github.com/[your-username]`
+- [ ] Update LinkedIn URL → `https://linkedin.com/in/[your-profile]`
+- [ ] Add Google Analytics ID (optional)
+- [ ] Add project screenshots (Admin → Projects → Edit → Upload)
+- [ ] Add your credential IDs/URLs to certifications
+
+---
+
+## Security Notes
+
+- Change default admin password immediately after first login
+- Set `APP_DEBUG=false` in production `.env`
+- Use a Google App Password (not your Gmail password) for SMTP
+- Rate limiting is enabled: 5 contact submissions/hour per IP
+
+---
+
+## License
+
+Personal use. Not for redistribution.
